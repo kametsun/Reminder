@@ -89,8 +89,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         private final Handler deleteHandler = new Handler();
         public RadioButton radioButton;
         public EditText editText;
-        private Runnable autoSaveRunnable, deleteRunnable;
-        private TextWatcher textWatcher;
+
 
         public ReminderViewHolder(View v, List<Reminder> reminders, ReminderAdapter adapter, Reminder.ReminderDBHelper db) {
             super(v);
@@ -100,13 +99,12 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
 
             // ラジオボタンを押したとき
             radioButton.setOnClickListener(view -> {
+                Runnable deleteRunnable = null;
                 // 連続で押されたときのHandlerをキャンセル(リムーブ)
                 if (deleteRunnable != null) {
                     deleteHandler.removeCallbacks(deleteRunnable);
-                    // 初期化(nullにする)
-                    deleteRunnable = null;
                 } else {
-                    // 削除用Rannableを定義
+                    // 削除用Runnableを定義
                     deleteRunnable = () -> {
                         // 押されたラジオボタンのpositionを取得
                         int position = getAdapterPosition();
@@ -125,7 +123,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             // タイトルを表示する
             editText.setText(reminder.getTitle());
             // TextWatcherを実装する
-            textWatcher = new TextWatcher() {
+            TextWatcher textWatcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -138,6 +136,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                 // 変更中・変更後処理を実装
                 @Override
                 public void afterTextChanged(Editable s) {
+                    Runnable autoSaveRunnable = null;
                     // 入力された文字から空か判断
                     if (!s.toString().trim().isEmpty()) {
                         // 直前のautoSaveRunnableが存在していればautoSaveRunnableをキャンセル
