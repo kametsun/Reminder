@@ -295,7 +295,6 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
             super(v);
             //EditTextを取得
             editText = v.findViewById(R.id.etGenre);
-            //textView = v.findViewById(R.id.tvGenre);
             button = v.findViewById(R.id.bt_Genre);
         }
 
@@ -342,7 +341,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
                         //textView.setText(s.toString().trim()); // 入力が完了したらTextViewに反映
 
                         // 1秒後に実行
-                        autoSaveHandler.postDelayed(autoSaveRunnable, 1000);
+                        autoSaveHandler.postDelayed(autoSaveRunnable, 2000);
                     }
                     //textView.setText(s.toString().trim());
                 }

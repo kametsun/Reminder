@@ -172,7 +172,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                             }
                         };
                         // 1秒後に実行
-                        autoSaveHandler.postDelayed(autoSaveRunnable, 1000);
+                        autoSaveHandler.postDelayed(autoSaveRunnable, 1500);
                         Log.d("保存します。", "autoSaveHandler 161");
                     }
                 }
