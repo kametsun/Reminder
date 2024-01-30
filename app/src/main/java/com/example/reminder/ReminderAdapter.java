@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     // 表示するリマインダーリスト
     private List<Reminder> reminders;
     private RecyclerView recyclerView;
+    private int genreId;
 
-    public ReminderAdapter(Context context, RecyclerView recyclerView) {
+    public ReminderAdapter(Context context, RecyclerView recyclerView, int genreId) {
         // DBオブジェクトを生成し、保存されているリマインダーを取得する
-        db = new Reminder.ReminderDBHelper(context);
-        this.reminders = db.getAllReminders();
+        this.db = new Reminder.ReminderDBHelper(context);
+        this.genreId = genreId;
+        this.reminders = db.getRemindersByGenreId(this.genreId);
         this.recyclerView = recyclerView;
     }
 
@@ -45,7 +48,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
 
     public void addNewReminderEditText() {
         // リマインダーオブジェクト作成
-        Reminder newReminder = new Reminder();
+        Reminder newReminder = new Reminder(genreId);
         // ReminderAdapterのremindersに追加・長さ取得
         reminders.add(newReminder);
         int newPosition = reminders.size() - 1;
@@ -141,6 +144,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                     if (!s.toString().trim().isEmpty()) {
                         // 直前のautoSaveRunnableが存在していればautoSaveRunnableをキャンセル
                         if (autoSaveRunnable != null) {
+                            Log.d("保存をキャンセル", "autoSaveHandler 147");
                             autoSaveHandler.removeCallbacks(autoSaveRunnable);
                         }
                         // オートセーブを実装
@@ -155,6 +159,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                         };
                         // 1秒後に実行
                         autoSaveHandler.postDelayed(autoSaveRunnable, 1000);
+                        Log.d("保存します。", "autoSaveHandler 161");
                     }
                 }
             };

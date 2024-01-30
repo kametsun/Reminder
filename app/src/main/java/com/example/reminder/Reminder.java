@@ -30,6 +30,10 @@ public class Reminder {
 
     }
 
+    public Reminder(int genreId) {
+        this.genreId = genreId;
+    }
+
     public int getId() {
         return id;
     }
@@ -100,6 +104,30 @@ public class Reminder {
             return reminders;
         }
 
+        public List<Reminder> getRemindersByGenreId(int genreId) {
+            Log.d("getRemindersByGenreIdです", "ジャンルから探します.");
+            List<Reminder> reminders = new ArrayList<>();
+            SQLiteDatabase db = this.getReadableDatabase();
+            String[] args = {String.valueOf(genreId)};
+
+            String sql = "SELECT * FROM reminders WHERE genre_id = ?";
+            Cursor cursor = db.rawQuery(sql, args);
+
+            while (cursor.moveToNext()) {
+                int idIndex = cursor.getColumnIndex("id");
+                int genreIdIndex = cursor.getColumnIndex("genre_id");
+                int titleIndex = cursor.getColumnIndex("title");
+                Reminder reminder = new Reminder(
+                        cursor.getInt(idIndex),
+                        cursor.getInt(genreIdIndex),
+                        cursor.getString(titleIndex)
+                );
+                Log.d("ジャンルから取得", reminder.title);
+                reminders.add(reminder);
+            }
+            return reminders;
+        }
+
         public int insertNewReminder(Reminder reminder) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
@@ -107,6 +135,7 @@ public class Reminder {
             values.put("title", reminder.getTitle());
 
             long newRowId = db.insert("reminders", null, values);
+            Log.d("保存成功", "IDは" + newRowId);
             return (int) newRowId;
         }
 
