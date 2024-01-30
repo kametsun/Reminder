@@ -3,6 +3,7 @@ package com.example.reminder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,11 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ReminderActivity extends AppCompatActivity {
     private ReminderAdapter adapter;
+    private TextView tvComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminder);
+
+        tvComplete = findViewById(R.id.tvComplete);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -26,7 +30,7 @@ public class ReminderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // ReminderAdapterを生成
-        adapter = new ReminderAdapter(this, recyclerView, genreId);
+        adapter = new ReminderAdapter(this, recyclerView, genreId, tvComplete);
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.btAddToDo).setOnClickListener(v -> adapter.addNewReminderEditText());

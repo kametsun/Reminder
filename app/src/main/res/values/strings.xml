@@ -2,4 +2,5 @@
     <string name="app_name">Reminder</string>
     <string name="tv_title">リマインダー</string>
     <string name="bt_new_reminder">New Reminder</string>
+    <string name="tv_complete">All Reminders Completed</string>
 </resources>

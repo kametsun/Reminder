@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,14 +21,17 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     // 表示するリマインダーリスト
     private List<Reminder> reminders;
     private RecyclerView recyclerView;
+    private TextView tvComplete;
     private int genreId;
 
-    public ReminderAdapter(Context context, RecyclerView recyclerView, int genreId) {
+    public ReminderAdapter(Context _context, RecyclerView _recyclerView, int _genreId, TextView _tvComplete) {
         // DBオブジェクトを生成し、保存されているリマインダーを取得する
-        this.db = new Reminder.ReminderDBHelper(context);
-        this.genreId = genreId;
+        this.db = new Reminder.ReminderDBHelper(_context);
+        this.genreId = _genreId;
         this.reminders = db.getRemindersByGenreId(this.genreId);
-        this.recyclerView = recyclerView;
+        this.recyclerView = _recyclerView;
+        this.tvComplete = _tvComplete;
+        checkReminders();
     }
 
     // RecyclerViewを初期化
@@ -40,9 +44,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         return new ReminderViewHolder(v, this.reminders, this, this.db);
     }
 
+    public void checkReminders() {
+        if (reminders.isEmpty()) {
+            tvComplete.setVisibility(View.VISIBLE);
+        } else {
+            tvComplete.setVisibility(View.GONE);
+        }
+    }
+
     // viewHolderの数 = reminders(リスト)のサイズ
     @Override
     public int getItemCount() {
+        checkReminders();
         return this.reminders.size();
     }
 
@@ -116,6 +129,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                         db.deleteReminder(reminder.getId());  // reminderのIDでdbから削除する
                         reminders.remove(position);                 // remindersリストから削除する
                         adapter.notifyItemRemoved(position);        // リストの変更をadapterに通知する -> Viewから消える
+                        adapter.checkReminders();
                     };
                     deleteHandler.postDelayed(deleteRunnable, 2000);    // 2秒後に削除する
                 }
